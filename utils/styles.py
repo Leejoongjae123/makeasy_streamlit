@@ -109,5 +109,73 @@ def apply_custom_css():
             color: #059669 !important;
             transform: translateY(-1px);
         }
+
+        /* 기본 사이드바 내비게이션 숨기기 */
+        [data-testid="stSidebarNav"] {
+            display: none;
+        }
+
+        /* 탭 스타일 개선 */
+        [data-testid="stTabs"] {
+            margin-bottom: 20px;
+        }
+
+        button[data-testid="stTab"] {
+            height: 50px;
+            padding: 0 30px !important;
+            background-color: transparent !important;
+            border: none !important;
+            transition: all 0.3s ease;
+        }
+
+        /* 탭 아래의 기본 붉은 선 및 강조선 제거/수정 */
+        div[data-baseweb="tab-highlight"] {
+            background-color: var(--primary-color) !important;
+        }
+
+        button[data-testid="stTab"] p {
+            font-size: 18px !important;
+            font-weight: 500 !important;
+            color: var(--text-muted) !important;
+        }
+
+        /* 선택된 탭 스타일 */
+        button[data-testid="stTab"][aria-selected="true"] {
+            border-bottom: 3px solid var(--primary-color) !important;
+        }
+
+        button[data-testid="stTab"][aria-selected="true"] p {
+            color: var(--primary-color) !important;
+            font-weight: 700 !important;
+        }
+
+        /* 호버 시 스타일 */
+        button[data-testid="stTab"]:hover p {
+            color: var(--primary-color) !important;
+        }
+
+        /* 멀티셀렉트(Multiselect) 배지 스타일 - 아웃라인 스타일 커스텀 */
+        span[data-baseweb="tag"] {
+            background-color: white !important;
+            color: var(--primary-color) !important;
+            border: 1px solid var(--primary-color) !important;
+            border-radius: 4px !important;
+        }
+
+        span[data-baseweb="tag"] [data-testid="stIcon"] {
+            color: var(--primary-color) !important;
+        }
+
+        /* 메인 콘텐츠 상단 패딩 축소 */
+        .block-container {
+            padding-top: 3rem !important;
+            padding-bottom: 2rem !important;
+        }
+
+        /* 탭 포커스 시 나타나는 붉은 아웃라인 제거 */
+        button[data-testid="stTab"]:focus {
+            box-shadow: none !important;
+            color: var(--primary-color) !important;
+        }
     </style>
     """, unsafe_allow_html=True)

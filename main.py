@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.styles import apply_custom_css
 from components.sidebar import render_sidebar
-from pages import dashboard, project_a, project_b, project_c
+from views import dashboard, project_a, project_b, project_c
 
 # Basic Page Config
 st.set_page_config(

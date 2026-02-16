@@ -12,7 +12,7 @@ def render_sidebar():
         st.markdown("""
             <div class="sidebar-header">
                 <h3 style='margin: 0; color: #1E293B; font-size: 18px; letter-spacing: -0.5px;'>
-                    크롤마스터
+                    정보 분석 에이전트
                 </h3>
             </div>
         """, unsafe_allow_html=True)
