@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 크롤마스터 (CrawlMaster) - 유니버셜 크롤링 대시보드
 
 이 프로젝트는 **Streamlit**을 기반으로 구축된 현대적이고 세련된 디자인의 고성능 크롤링 매니지먼트 대시보드입니다. 다양한 소스에서 수집된 데이터를 통합 관리하고 분석할 수 있는 기능을 제공합니다.
@@ -43,14 +44,12 @@
 ## 🚀 빠른 시작
 
 1. 저장소를 클론합니다.
-
    ```bash
    git clone https://github.com/Leejoongjae123/makeasy_streamlit.git
    cd makeasy_streamlit
    ```
 
 2. 필수 라이브러리를 설치합니다.
-
    ```bash
    pip install streamlit pandas xlsxwriter
    ```
@@ -63,3 +62,6 @@
 ## 📝 라이선스
 
 이 프로젝트는 개인/학습용 프로젝트로 자유롭게 수정 및 배포가 가능합니다.
+=======
+# Streamlit
+>>>>>>> a98ef7e241a06bee1157897784556ceea6b5c78d
