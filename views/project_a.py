@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-from utils.data_manager import get_sample_data
+from utils.data_manager import get_sample_data, get_supabase_data, get_categories, get_sources
+from utils.gemini_client import summarize_issues
 
 def show():
     st.title("프로젝트 A - 이슈 모니터링 에이전트")
@@ -13,6 +14,8 @@ def show():
         st.session_state.project_a_tab = "이슈 수집"
     if "is_analyzing" not in st.session_state:
         st.session_state.is_analyzing = False
+    if "analysis_result" not in st.session_state:
+        st.session_state.analysis_result = None
 
     # 풀스크린 로더 오버레이 구현
     if st.session_state.is_analyzing:
@@ -56,9 +59,30 @@ def show():
                 <div class="loader-text">AI 분석 중</div>
             </div>
         """, unsafe_allow_html=True)
-        
-        import time
-        time.sleep(2.5) # 로딩 효과 시뮬레이션
+
+        # 선택된 항목 수집
+        selected_df = st.session_state.df_with_selection[st.session_state.df_with_selection["선택"] == True]
+
+        if len(selected_df) > 0:
+            issues_data = []
+            for _, row in selected_df.iterrows():
+                issues_data.append({
+                    'title': row['제목'],
+                    'content': row['내용'],
+                    'source_url': row.get('source_url', '')
+                })
+
+            try:
+                # Gemini API 호출
+                result = summarize_issues(issues_data)
+                st.session_state.analysis_result = result
+            except Exception as e:
+                st.session_state.analysis_result = {
+                    'title': '분석 실패',
+                    'summary': f'AI 분석 중 오류가 발생했습니다: {str(e)}',
+                    'sources': []
+                }
+
         st.session_state.project_a_tab = "이슈 분석"
         st.session_state.is_analyzing = False
         st.rerun()
@@ -102,14 +126,13 @@ def show():
 
     c1, c2, c3 = st.columns([1, 1, 5])
     with c1:
-        if st.button("이슈 수집", key="btn_tab1", use_container_width=True, 
+        if st.button("이슈 수집", key="btn_tab1", use_container_width=True,
                      type="secondary", help=None):
             st.session_state.project_a_tab = "이슈 수집"
             st.rerun()
-        # 활성화 시 스타일 적용을 위한 HTML/CSS 주입 (버튼 클래스 제어가 어려우므로 수동 스타일링)
         if st.session_state.project_a_tab == "이슈 수집":
             st.markdown('<style>#btn_tab1 { border-bottom: 3px solid #1F2C5C !important; color: #1F2C5C !important; font-weight: 700 !important; }</style>', unsafe_allow_html=True)
-            
+
     with c2:
         if st.button("이슈 분석", key="btn_tab2", use_container_width=True,
                      type="secondary", help=None):
@@ -143,25 +166,29 @@ def show():
     """, unsafe_allow_html=True)
 
     if st.session_state.project_a_tab == "이슈 수집":
+        # Supabase에서 동적으로 카테고리와 정보원 로드
+        categories = get_categories()
+        sources_dict, source_names, _ = get_sources()
+
         # 1. 검색 필터 섹션
         with st.container(border=True):
             st.markdown("### 검색 필터")
-            
+
             col1, col2 = st.columns(2)
-            
+
             with col1:
-                # 유형 (Type)
+                # 유형 (Type) - Supabase에서 가져온 카테고리 사용
                 type_options = st.multiselect(
                     "유형",
-                    ["뉴스", "블로그", "소셜미디어", "보고서"],
-                    default=["뉴스", "블로그"]
+                    categories,
+                    default=categories[:2] if len(categories) >= 2 else categories
                 )
-                
-                # 정보원 (Source)
+
+                # 정보원 (Source) - Supabase에서 가져온 정보원 사용
                 source_options = st.multiselect(
                     "정보원",
-                    ["네이버", "다음", "구글", "트위터"],
-                    default=["네이버", "다음"]
+                    source_names,
+                    default=source_names[:2] if len(source_names) >= 2 else source_names
                 )
 
             with col2:
@@ -180,44 +207,27 @@ def show():
                         value=datetime.now(),
                         label_visibility="collapsed"
                     )
-                
+
                 # 키워드 (Keyword)
                 keyword = st.text_input(
                     "키워드",
                     placeholder="검색할 키워드를 입력하세요...",
                     key="keyword_input"
                 )
-            
+
             search_btn = st.button("검색 실행", type="primary", use_container_width=True)
 
         st.divider()
 
-        # 2. 데이터 필터링 로직
-        df = get_sample_data()
-        
-        # 발행일 기간 필터링
-        df["발행일_dt"] = pd.to_datetime(df["발행일"]).dt.date
-        df = df[(df["발행일_dt"] >= start_date) & (df["발행일_dt"] <= end_date)]
+        # 2. Supabase에서 필터링된 데이터 가져오기
+        df = get_supabase_data(
+            type_filters=type_options if type_options else None,
+            source_filters=source_options if source_options else None,
+            start_date=start_date,
+            end_date=end_date,
+            keyword=keyword if keyword else None
+        )
 
-        # 유형 필터링
-        if type_options:
-            df = df[df["유형"].isin(type_options)]
-
-        # 정보원 필터링
-        if source_options:
-            df = df[df["정보원"].isin(source_options)]
-
-        # 키워드 필터링
-        if keyword:
-            df = df[
-                df["제목"].str.contains(keyword, case=False) | 
-                df["내용"].str.contains(keyword, case=False) |
-                df["키워드"].str.contains(keyword, case=False)
-            ]
-
-        # 기본 정렬 (최신순)
-        df = df.sort_values("발행일", ascending=False)
-        
         if "df_with_selection" not in st.session_state:
             df.insert(0, "선택", False)
             st.session_state.df_with_selection = df
@@ -228,7 +238,7 @@ def show():
         col_res_text, col_res_btn1, col_res_btn2 = st.columns([2, 1, 1])
         with col_res_text:
             st.markdown(f"총 **{len(st.session_state.df_with_selection)}**개의 결과가 검색되었습니다.")
-        
+
         with col_res_btn1:
             if not st.session_state.df_with_selection.empty:
                 import io
@@ -236,7 +246,7 @@ def show():
                 with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                     export_df = st.session_state.df_with_selection.drop(columns=["발행일_dt"]) if "발행일_dt" in st.session_state.df_with_selection.columns else st.session_state.df_with_selection
                     export_df.to_excel(writer, index=False, sheet_name='Sheet1')
-                
+
                 st.download_button(
                     label="엑셀 다운로드",
                     data=buffer.getvalue(),
@@ -245,11 +255,19 @@ def show():
                     use_container_width=True,
                     key="download_excel"
                 )
-        
+
         with col_res_btn2:
-            if st.button("🚀 분석 실행", type="primary", use_container_width=True):
-                st.session_state.is_analyzing = True
-                st.rerun()
+            selected_count = st.session_state.df_with_selection["선택"].sum() if not st.session_state.df_with_selection.empty else 0
+            if selected_count == 0:
+                st.button("🚀 분석 실행", type="primary", use_container_width=True, disabled=True)
+                st.caption("⚠️ 분석할 항목을 선택하세요 (최대 3개)")
+            elif selected_count > 3:
+                st.button("🚀 분석 실행", type="primary", use_container_width=True, disabled=True)
+                st.caption("⚠️ 최대 3개까지만 선택 가능합니다")
+            else:
+                if st.button("🚀 분석 실행", type="primary", use_container_width=True):
+                    st.session_state.is_analyzing = True
+                    st.rerun()
 
         if not st.session_state.df_with_selection.empty:
             # st.data_editor를 사용하여 체크박스 선택 구현
@@ -270,20 +288,19 @@ def show():
             # 선택 제한 로직 (최대 3개, 초과 시 경고 및 무시)
             if st.session_state.issue_selection_table["edited_rows"]:
                 changes = st.session_state.issue_selection_table["edited_rows"]
-                
+
                 # 현재 이미 선택된 갯수 확인
                 current_selected_count = st.session_state.df_with_selection["선택"].sum()
-                
+
                 for idx_str, change in changes.items():
                     idx = int(idx_str)
                     is_trying_to_select = change.get("선택", False)
-                    
+
                     # 새로 선택하려는 경우
                     if is_trying_to_select:
                         # 이미 3개인 상태에서 추가 선택 시도 시
                         if current_selected_count >= 3:
                             st.warning("⚠️ 최대 3개까지만 선택 가능합니다.")
-                            # 변경 사항 반영하지 않고 패스 (세션 상태 유지)
                         else:
                             st.session_state.df_with_selection.at[idx, "선택"] = True
                             st.session_state.selected_idx_history.append(idx)
@@ -292,8 +309,7 @@ def show():
                         st.session_state.df_with_selection.at[idx, "선택"] = False
                         if idx in st.session_state.selected_idx_history:
                             st.session_state.selected_idx_history.remove(idx)
-                
-                # 강제 리렌더링하여 체크박스 상태 업데이트
+
                 st.rerun()
         else:
             st.info("검색 조건에 맞는 데이터가 없습니다.")
@@ -301,7 +317,7 @@ def show():
     else:
         st.subheader("이슈 분석 리포트")
         st.markdown("수집된 데이터에 대한 AI 정밀 분석 결과입니다.")
-        
+
         # 테이블 스타일 커스텀 CSS 적용
         st.markdown("""
         <style>
@@ -343,39 +359,72 @@ def show():
                 word-break: break-all;
                 text-decoration: none;
             }
+            .source-list {
+                line-height: 1.8;
+            }
         </style>
         """, unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <table class="issue-table">
-            <thead>
-                <tr>
-                    <th class="label-cell">제목</th>
-                    <th>인도 델리, 대기오염 악화로 재택근무 조치 시행</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="label-cell">요약</td>
-                    <td class="summary-text">
-<strong>□ 델리, 심각한 대기오염으로 재택근무 정책 시행</strong>
-- 델리(Delhi)의 대기오염 문제가 지속됨에 따라, 델리 지방정부는 12월 17일부로 민간 및 정부 기관의 50%에 대해 재택근무 조치를 시행함.
-- 델리의 대기질 지수(AQI: Air Quality Index)는 '심각(severe)' 수준을 유지하고 있으며, 가시거리 및 항공·철도 교통에 영향을 미치고 있음.
+        # 분석 결과가 있으면 표시
+        if st.session_state.analysis_result:
+            result = st.session_state.analysis_result
+            title = result.get('title', '분석 결과')
+            summary = result.get('summary', '요약 내용이 없습니다.')
+            sources = result.get('sources', [])
 
-<strong>□ 대기오염 대응 조치 및 피해 노동자 지원</strong>
-- 델리 정부는 환경 기준 미달 차량을 금지하고 있으며, 일부 건설 활동을 중단함.
-- 카필 미슈라(Kapil Mishra) 델리 지방정부 장관은 금지 조치로 피해를 입은 건설 노동자들에게 1만 루피(약 16만 원)의 보상금을 지급한다고 발표함.
+            # 출처 URL 포맷팅
+            sources_html = ""
+            if sources:
+                for url in sources:
+                    if url:
+                        sources_html += f'<a href="{url}" class="url-text" target="_blank">{url}</a><br>'
+            else:
+                sources_html = '<span style="color: #94A3B8;">출처 정보가 없습니다.</span>'
 
-<strong>□ 정부, 대기질 개선 의지 표명</strong>
-- 만진더 싱 시르사(Manjinder Singh Sirsa) 델리 환경부장관은 청정한 공기를 제공하겠다는 정부의 의지를 강조함.
-- 델리와 인근 지역의 대기오염 문제는 특히 겨울철에 악화되는 것으로 알려져 있으며, 다수 주민들의 호흡기 질환을 초래하고 있음.
-                    </td>
-                </tr>
-                <tr>
-                    <td class="label-cell">출처</td>
-                    <td><a href="#" class="url-text">https://www.ittefaq.com.bd/766469/E0%A6%AD%E0%A6%AD%E0%A6%AD%E0%A6%AD%E0%A6%AD...</a></td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        """, unsafe_allow_html=True)
+            st.markdown(f"""
+            <table class="issue-table">
+                <thead>
+                    <tr>
+                        <th class="label-cell">제목</th>
+                        <th>{title}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label-cell">요약</td>
+                        <td class="summary-text">{summary}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">출처</td>
+                        <td class="source-list">{sources_html}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("분석할 이슈를 선택하고 '분석 실행' 버튼을 클릭하세요.")
+            st.markdown("""
+            <table class="issue-table">
+                <thead>
+                    <tr>
+                        <th class="label-cell">제목</th>
+                        <th>분석 대기 중</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label-cell">요약</td>
+                        <td class="summary-text" style="color: #94A3B8;">
+                            이슈 수집 탭에서 분석할 항목을 선택(최대 3개)한 후,
+                            '🚀 분석 실행' 버튼을 클릭하면 AI가 자동으로 요약합니다.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">출처</td>
+                        <td><span style="color: #94A3B8;">분석 후 출처 URL이 표시됩니다.</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            """, unsafe_allow_html=True)
