@@ -181,19 +181,19 @@ def show():
                 type_options = st.multiselect(
                     "유형",
                     categories,
-                    default=categories[:2] if len(categories) >= 2 else categories
+                    default=[]  # 기본값 없음 - 모든 유형 표시
                 )
 
                 # 정보원 (Source) - Supabase에서 가져온 정보원 사용
                 source_options = st.multiselect(
                     "정보원",
                     source_names,
-                    default=source_names[:2] if len(source_names) >= 2 else source_names
+                    default=[]  # 기본값 없음 - 모든 정보원 표시
                 )
 
             with col2:
-                # 발행일 범위 (Start Date & End Date)
-                st.markdown("<p style='font-size: 14px; font-weight: 500; margin-bottom: 2px;'>발행일 범위</p>", unsafe_allow_html=True)
+                # 수집일 범위 (Start Date & End Date)
+                st.markdown("<p style='font-size: 14px; font-weight: 500; margin-bottom: 2px;'>수집일 범위</p>", unsafe_allow_html=True)
                 d_col1, d_col2 = st.columns(2)
                 with d_col1:
                     start_date = st.date_input(
@@ -208,11 +208,11 @@ def show():
                         label_visibility="collapsed"
                     )
 
-                # 키워드 (Keyword)
-                keyword = st.text_input(
-                    "키워드",
-                    placeholder="검색할 키워드를 입력하세요...",
-                    key="keyword_input"
+                # 제목 검색
+                title_search = st.text_input(
+                    "제목 검색",
+                    placeholder="검색할 제목을 입력하세요...",
+                    key="title_search_input"
                 )
 
             search_btn = st.button("검색 실행", type="primary", use_container_width=True)
@@ -225,13 +225,13 @@ def show():
             source_filters=source_options if source_options else None,
             start_date=start_date,
             end_date=end_date,
-            keyword=keyword if keyword else None
+            title_search=title_search if title_search else None
         )
 
-        if "df_with_selection" not in st.session_state:
+        # 검색 버튼을 눌렀을 때 세션 상태 업데이트
+        if search_btn or "df_with_selection" not in st.session_state:
             df.insert(0, "선택", False)
             st.session_state.df_with_selection = df
-        if "selected_idx_history" not in st.session_state:
             st.session_state.selected_idx_history = []
 
         # 3. 결과 표시 및 버튼 영역
@@ -272,7 +272,7 @@ def show():
         if not st.session_state.df_with_selection.empty:
             # st.data_editor를 사용하여 체크박스 선택 구현
             edited_df = st.data_editor(
-                st.session_state.df_with_selection[["선택", "ID", "제목", "유형", "정보원", "발행일"]],
+                st.session_state.df_with_selection[["선택", "ID", "제목", "유형", "정보원", "수집일"]],
                 use_container_width=True,
                 hide_index=True,
                 column_config={
@@ -280,7 +280,7 @@ def show():
                     "ID": st.column_config.NumberColumn("ID", width="small", disabled=True),
                     "제목": st.column_config.TextColumn("제목", width="large", disabled=True),
                     "유형": st.column_config.TextColumn("유형", disabled=True),
-                    "발행일": st.column_config.DateColumn("발행일", disabled=True),
+                    "수집일": st.column_config.DateColumn("수집일", disabled=True),
                 },
                 key="issue_selection_table"
             )
