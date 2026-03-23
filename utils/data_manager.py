@@ -38,6 +38,7 @@ def get_sources():
 def get_supabase_data(type_filters=None, source_filters=None, start_date=None, end_date=None, title_search=None):
     """
     Supabase에서 필터링된 데이터를 가져옵니다.
+    페이지네이션을 사용하여 1000개 이상의 데이터도 모두 가져옵니다.
 
     Args:
         type_filters: 유형 필터 리스트 (sources.category 기반)
@@ -52,19 +53,41 @@ def get_supabase_data(type_filters=None, source_filters=None, start_date=None, e
     try:
         supabase = get_supabase_client()
 
-        # 기본 쿼리 - sources와 JOIN
-        query = supabase.table("datas").select("*, sources(id, name, country, category)")
+        # 페이지네이션으로 모든 데이터 가져오기
+        all_data = []
+        page_size = 1000  # Supabase 최대 limit
+        offset = 0
 
-        # 수집일 필터 적용 (created_at 기준)
-        if start_date:
-            query = query.gte("created_at", start_date.isoformat())
-        if end_date:
-            end_datetime = datetime.combine(end_date, datetime.max.time())
-            query = query.lte("created_at", end_datetime.isoformat())
+        while True:
+            # 기본 쿼리 - sources와 JOIN
+            query = supabase.table("datas").select("*, sources(id, name, country, category)")
 
-        # 데이터 가져오기
-        response = query.execute()
-        data = response.data
+            # 수집일 필터 적용 (created_at 기준)
+            if start_date:
+                query = query.gte("created_at", start_date.isoformat())
+            if end_date:
+                end_datetime = datetime.combine(end_date, datetime.max.time())
+                query = query.lte("created_at", end_datetime.isoformat())
+
+            # 페이지네이션 적용
+            query = query.range(offset, offset + page_size - 1)
+
+            # 데이터 가져오기
+            response = query.execute()
+            chunk_data = response.data
+
+            if not chunk_data:
+                break
+
+            all_data.extend(chunk_data)
+
+            # 가져온 데이터가 page_size보다 적으면 마지막 페이지
+            if len(chunk_data) < page_size:
+                break
+
+            offset += page_size
+
+        data = all_data
 
         # DataFrame으로 변환
         df = pd.DataFrame(data)
