@@ -325,7 +325,7 @@ def show():
                 width: 100%;
                 border-collapse: collapse;
                 margin-top: 20px;
-                border: 1px solid #E2E8F0;
+                border: 1px solid rgba(128, 128, 128, 0.2);
                 font-family: 'Inter', sans-serif;
             }
             .issue-table th {
@@ -338,12 +338,12 @@ def show():
             }
             .issue-table td {
                 padding: 20px;
-                border: 1px solid #E2E8F0;
+                border: 1px solid rgba(128, 128, 128, 0.2);
                 vertical-align: top;
             }
             .label-cell {
-                background-color: #F1F5F9;
-                color: #1E293B;
+                background-color: var(--secondary-background-color);
+                color: var(--text-color);
                 font-weight: 700;
                 width: 120px;
                 text-align: center;
@@ -351,11 +351,11 @@ def show():
             }
             .summary-text {
                 line-height: 1.6;
-                color: #334155;
+                color: var(--text-color);
                 white-space: pre-wrap;
             }
             .url-text {
-                color: #2563EB;
+                color: #3B82F6;
                 word-break: break-all;
                 text-decoration: none;
             }
@@ -379,7 +379,7 @@ def show():
                     if url:
                         sources_html += f'<a href="{url}" class="url-text" target="_blank">{url}</a><br>'
             else:
-                sources_html = '<span style="color: #94A3B8;">출처 정보가 없습니다.</span>'
+                sources_html = '<span style="color: var(--text-color); opacity: 0.6;">출처 정보가 없습니다.</span>'
 
             st.markdown(f"""
             <table class="issue-table">
@@ -415,14 +415,14 @@ def show():
                 <tbody>
                     <tr>
                         <td class="label-cell">요약</td>
-                        <td class="summary-text" style="color: #94A3B8;">
+                        <td class="summary-text" style="color: var(--text-color); opacity: 0.6;">
                             이슈 수집 탭에서 분석할 항목을 선택(최대 3개)한 후,
                             '🚀 분석 실행' 버튼을 클릭하면 AI가 자동으로 요약합니다.
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell">출처</td>
-                        <td><span style="color: #94A3B8;">분석 후 출처 URL이 표시됩니다.</span></td>
+                        <td><span style="color: var(--text-color); opacity: 0.6;">분석 후 출처 URL이 표시됩니다.</span></td>
                     </tr>
                 </tbody>
             </table>

@@ -5,14 +5,6 @@ def apply_custom_css():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        :root {
-            --primary-color: #1F2C5C;
-            --background-light: #F8FAFC;
-            --border-color: #E2E8F0;
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-        }
-
         /* 전역 글꼴 설정 */
         .main .block-container {
             font-family: 'Inter', sans-serif;
@@ -20,19 +12,19 @@ def apply_custom_css():
 
         /* 사이드바 스타일 */
         [data-testid="stSidebar"] {
-            background-color: var(--background-light);
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid rgba(128, 128, 128, 0.2);
         }
 
         /* 사이드바 내의 마크다운 텍스트 */
         [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
-            color: #475569 !important;
+            color: var(--text-color) !important;
         }
 
         /* 사이드바 내의 버튼 스타일 재정의 */
         [data-testid="stSidebar"] .stButton button {
             background-color: transparent;
-            color: var(--text-muted);
+            color: var(--text-color);
+            opacity: 0.8;
             border: none;
             border-radius: 6px;
             padding: 8px 12px;
@@ -46,15 +38,16 @@ def apply_custom_css():
         }
 
         [data-testid="stSidebar"] .stButton button:hover {
-            background-color: #F1F5F9;
-            color: var(--text-main);
+            background-color: var(--secondary-background-color);
+            opacity: 1;
         }
 
         /* 활성화된 버튼 스타일 (Primary) */
         [data-testid="stSidebar"] .stButton button[kind="primary"] {
-            background-color: #F1F5F9 !important;
+            background-color: var(--secondary-background-color) !important;
             color: var(--primary-color) !important;
             font-weight: 600;
+            opacity: 1;
             border-left: 3px solid var(--primary-color) !important;
             border-radius: 0 6px 6px 0;
         }
@@ -63,13 +56,13 @@ def apply_custom_css():
         .sidebar-header {
             padding: 10px 0 20px 0;
             margin-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
         }
 
         /* 카드 스타일 */
         .stElementContainer div[data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: white;
-            border: 1px solid var(--border-color) !important;
+            background-color: var(--background-color);
+            border: 1px solid rgba(128, 128, 128, 0.2) !important;
             border-radius: 12px !important;
             padding: 10px;
             transition: all 0.3s ease;
@@ -78,7 +71,7 @@ def apply_custom_css():
 
         .stElementContainer div[data-testid="stVerticalBlockBorderWrapper"]:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
             border-color: var(--primary-color) !important;
         }
 
@@ -91,7 +84,7 @@ def apply_custom_css():
         }
 
         h1, h2, h3 {
-            color: var(--text-main);
+            color: var(--text-color);
             font-weight: 700 !important;
         }
 
@@ -99,14 +92,12 @@ def apply_custom_css():
         div[data-testid="stDownloadButton"] > button {
             border: 1px solid #10B981 !important;
             color: #10B981 !important;
-            background-color: white !important;
+            background-color: transparent !important;
             transition: all 0.2s ease;
         }
 
         div[data-testid="stDownloadButton"] > button:hover {
-            background-color: #F0FDF4 !important;
-            border-color: #059669 !important;
-            color: #059669 !important;
+            background-color: rgba(16, 185, 129, 0.1) !important;
             transform: translateY(-1px);
         }
 
@@ -136,7 +127,8 @@ def apply_custom_css():
         button[data-testid="stTab"] p {
             font-size: 18px !important;
             font-weight: 500 !important;
-            color: var(--text-muted) !important;
+            color: var(--text-color) !important;
+            opacity: 0.7;
         }
 
         /* 선택된 탭 스타일 */
@@ -147,16 +139,18 @@ def apply_custom_css():
         button[data-testid="stTab"][aria-selected="true"] p {
             color: var(--primary-color) !important;
             font-weight: 700 !important;
+            opacity: 1;
         }
 
         /* 호버 시 스타일 */
         button[data-testid="stTab"]:hover p {
             color: var(--primary-color) !important;
+            opacity: 0.9;
         }
 
         /* 멀티셀렉트(Multiselect) 배지 스타일 - 아웃라인 스타일 커스텀 */
         span[data-baseweb="tag"] {
-            background-color: white !important;
+            background-color: transparent !important;
             color: var(--primary-color) !important;
             border: 1px solid var(--primary-color) !important;
             border-radius: 4px !important;
@@ -179,3 +173,4 @@ def apply_custom_css():
         }
     </style>
     """, unsafe_allow_html=True)
+

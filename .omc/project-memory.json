@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774747728645,
+  "projectRoot": "d:\\000.FrontEnd\\206_2.universial_crwaling_streamlit",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "components"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "components": {
+      "path": "components",
+      "purpose": "UI components",
+      "fileCount": 1,
+      "lastAccessed": 1774747728580,
+      "keyFiles": [
+        "sidebar.py"
+      ]
+    },
+    "utils": {
+      "path": "utils",
+      "purpose": "Utility functions",
+      "fileCount": 4,
+      "lastAccessed": 1774747728582,
+      "keyFiles": [
+        "data_manager.py",
+        "gemini_client.py",
+        "styles.py",
+        "supabase_client.py"
+      ]
+    },
+    "views": {
+      "path": "views",
+      "purpose": "View templates",
+      "fileCount": 4,
+      "lastAccessed": 1774747728583,
+      "keyFiles": [
+        "dashboard.py",
+        "project_a.py",
+        "project_b.py",
+        "project_c.py"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "utils\\styles.py",
+      "accessCount": 3,
+      "lastAccessed": 1774747894378,
+      "type": "file"
+    },
+    {
+      "path": "main.py",
+      "accessCount": 1,
+      "lastAccessed": 1774747825131,
+      "type": "file"
+    },
+    {
+      "path": ".streamlit\\config.toml",
+      "accessCount": 1,
+      "lastAccessed": 1774747922643,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
