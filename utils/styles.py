@@ -77,10 +77,10 @@ def apply_custom_css():
 
         /* 버튼 스타일 */
         .stButton > button[kind="primary"] {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--primary-color) !important;
+            color: white !important;
             border-radius: 6px;
-            border: none;
+            border: none !important;
         }
 
         h1, h2, h3 {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1774747728645,
-  "projectRoot": "d:\\000.FrontEnd\\206_2.universial_crwaling_streamlit",
+  "lastScanned": 1775087417342,
+  "projectRoot": "D:\\000.FrontEnd\\206_2.universial_crwaling_streamlit",
   "techStack": {
     "languages": [
       {
@@ -47,7 +47,7 @@
       "path": "components",
       "purpose": "UI components",
       "fileCount": 1,
-      "lastAccessed": 1774747728580,
+      "lastAccessed": 1775087417083,
       "keyFiles": [
         "sidebar.py"
       ]
@@ -56,7 +56,7 @@
       "path": "utils",
       "purpose": "Utility functions",
       "fileCount": 4,
-      "lastAccessed": 1774747728582,
+      "lastAccessed": 1775087417084,
       "keyFiles": [
         "data_manager.py",
         "gemini_client.py",
@@ -68,7 +68,7 @@
       "path": "views",
       "purpose": "View templates",
       "fileCount": 4,
-      "lastAccessed": 1774747728583,
+      "lastAccessed": 1775087417084,
       "keyFiles": [
         "dashboard.py",
         "project_a.py",
@@ -81,19 +81,19 @@
     {
       "path": "utils\\styles.py",
       "accessCount": 3,
-      "lastAccessed": 1774747894378,
+      "lastAccessed": 1775087526975,
       "type": "file"
     },
     {
-      "path": "main.py",
+      "path": "views\\dashboard.py",
       "accessCount": 1,
-      "lastAccessed": 1774747825131,
+      "lastAccessed": 1775087473805,
       "type": "file"
     },
     {
       "path": ".streamlit\\config.toml",
       "accessCount": 1,
-      "lastAccessed": 1774747922643,
+      "lastAccessed": 1775087514298,
       "type": "file"
     }
   ],
