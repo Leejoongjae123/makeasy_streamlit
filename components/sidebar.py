@@ -2,10 +2,12 @@ import streamlit as st
 
 def sidebar_menu_btn(label, page_key, current_page):
     is_active = current_page == page_key
-    btn_type = "primary" if is_active else "secondary"
-    if st.button(label, key=f"nav_{page_key}", use_container_width=True, type=btn_type):
-        st.session_state.current_page = page_key
-        st.rerun()
+    if is_active:
+        st.markdown(f'<div class="nav-item-active">{label}</div>', unsafe_allow_html=True)
+    else:
+        if st.button(label, key=f"nav_{page_key}", use_container_width=True):
+            st.session_state.current_page = page_key
+            st.rerun()
 
 def render_sidebar():
     with st.sidebar:
@@ -19,7 +21,7 @@ def render_sidebar():
 
         st.markdown("<div style='margin: 20px 0 10px 4px; color: #94A3B8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;'>메인 메뉴</div>", unsafe_allow_html=True)
         sidebar_menu_btn("대시보드", "dashboard", st.session_state.current_page)
-        
+
         st.markdown("<div style='margin: 20px 0 10px 4px; color: #94A3B8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;'>프로젝트</div>", unsafe_allow_html=True)
         sidebar_menu_btn("프로젝트 A", "project_a", st.session_state.current_page)
         sidebar_menu_btn("프로젝트 B", "project_b", st.session_state.current_page)

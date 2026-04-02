@@ -80,20 +80,50 @@
   "hotPaths": [
     {
       "path": "utils\\styles.py",
+      "accessCount": 24,
+      "lastAccessed": 1775126337459,
+      "type": "file"
+    },
+    {
+      "path": "components\\sidebar.py",
+      "accessCount": 8,
+      "lastAccessed": 1775126324582,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 7,
+      "lastAccessed": 1775120014253,
+      "type": "directory"
+    },
+    {
+      "path": "views\\project_c.py",
       "accessCount": 3,
-      "lastAccessed": 1775087526975,
+      "lastAccessed": 1775119901945,
       "type": "file"
     },
     {
       "path": "views\\dashboard.py",
-      "accessCount": 1,
-      "lastAccessed": 1775087473805,
+      "accessCount": 3,
+      "lastAccessed": 1775119926989,
       "type": "file"
     },
     {
       "path": ".streamlit\\config.toml",
+      "accessCount": 2,
+      "lastAccessed": 1775119382431,
+      "type": "file"
+    },
+    {
+      "path": "main.py",
       "accessCount": 1,
-      "lastAccessed": 1775087514298,
+      "lastAccessed": 1775119997491,
+      "type": "file"
+    },
+    {
+      "path": "views\\project_a.py",
+      "accessCount": 1,
+      "lastAccessed": 1775120021864,
       "type": "file"
     }
   ],

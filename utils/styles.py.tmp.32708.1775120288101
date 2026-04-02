@@ -29,10 +29,11 @@ def apply_custom_css():
             color: var(--text-color) !important;
         }
 
-        /* 사이드바 버튼 기본 스타일 */
+        /* 사이드바 내의 버튼 스타일 재정의 */
         [data-testid="stSidebar"] .stButton button {
             background-color: transparent !important;
             color: var(--text-color) !important;
+            opacity: 0.8;
             border: none !important;
             border-radius: 6px;
             padding: 8px 12px;
@@ -41,28 +42,29 @@ def apply_custom_css():
             font-size: 15px;
             transition: all 0.2s ease;
             margin-bottom: 2px;
+            display: block;
             width: 100%;
-            opacity: 0.8;
-            box-shadow: none !important;
         }
 
         [data-testid="stSidebar"] .stButton button:hover {
             background-color: var(--secondary-background-color) !important;
-            color: var(--text-color) !important;
             opacity: 1;
         }
 
-        /* 활성화된 메뉴 아이템 */
-        .nav-item-active {
-            background-color: var(--primary-color);
+        /* 사이드바 활성화된 버튼 스타일 (secondary 타입 = active 상태) */
+        [data-testid="stSidebar"] .stButton button[kind="secondary"] {
+            background-color: var(--primary-color) !important;
             color: white !important;
             font-weight: 600;
-            font-size: 15px;
-            padding: 8px 12px;
-            border-left: 3px solid var(--primary-color);
+            opacity: 1;
+            border-left: 3px solid var(--primary-color) !important;
             border-radius: 0 6px 6px 0;
-            margin-bottom: 2px;
-            cursor: default;
+        }
+
+        /* 사이드바 비활성화(hover) 버튼 스타일 */
+        [data-testid="stSidebar"] .stButton button {
+            background-color: transparent !important;
+            color: var(--text-color) !important;
         }
 
         /* 대시보드의 primary 버튼 스타일 */
